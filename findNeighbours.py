@@ -19,6 +19,7 @@ def findNeighbours(pre, post):
     return closestNeighbours, closestNeighbourDistance
 
 
+# Finds the post synaptic neurons which are closest to each pre synaptic neuron
 def isClosestNeighbour(closestNeighbours, closestNeighbourDistance, index):
     minDistance = math.inf
 

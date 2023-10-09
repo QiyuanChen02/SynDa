@@ -7,7 +7,7 @@ def filterPoints(
 ):
     image = Image.open(imageSrc)
     resizedImage = image.resize((round(width), round(height)))
-    # Convert the data to a list of [X, Y] points as integers
+    # Convert the data to a list of [X, Y, Area] points as floats
     parsedData = [[float(point[0]), float(point[1]), float(point[2])] for point in data]
 
     filteredPoints = []

@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt  # pip install matplotlib
-import mplcursors  # pip install mplcursors
+import matplotlib.pyplot as plt
+import mplcursors
 
 
 # Show the interactive visualization

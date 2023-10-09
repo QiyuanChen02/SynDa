@@ -1,4 +1,4 @@
-from PIL import Image  # pip install pillow
+from PIL import Image
 import math
 
 

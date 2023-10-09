@@ -1,3 +1,4 @@
+# Takes the data in the 2 csv files and returns a list of points with the format [X, Y, Area]
 def fetchPoints(fileName):
     wantedData = ["AreaShape_Center_X", "AreaShape_Center_Y", "AreaShape_Area"]
     wantedIndices = []
