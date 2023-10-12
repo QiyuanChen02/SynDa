@@ -12,7 +12,7 @@ def generateEmptyGrid(length, width):
 
 def generateGrids(
     data,
-    gridsize,
+    GRIDSIZE,
     minElementX,
     minElementY,
     maxElementX,
@@ -21,12 +21,12 @@ def generateGrids(
 ):
     width = maxElementX - minElementX
     height = maxElementY - minElementY
-    gridDensity = generateEmptyGrid(int(height / gridsize), int(width / gridsize))
+    gridDensity = generateEmptyGrid(int(height / GRIDSIZE), int(width / GRIDSIZE))
     gridSynapses = generateEmptyGrid(int(height), int(width))
 
     # Average density + synaptic number calculation
-    squaresX = width // gridsize
-    squaresY = height // gridsize
+    squaresX = width // GRIDSIZE
+    squaresY = height // GRIDSIZE
     totalPoints = len(data)
     meanValue = totalPoints / (squaresX * squaresY)
     print("Mean density of the Array: " + str(meanValue))
@@ -41,8 +41,8 @@ def generateGrids(
         YCoordinate = float(coordinate[1])
 
         if not isSynapse:
-            densityX = math.floor((XCoordinate - minElementX) / gridsize)
-            densityY = math.floor((YCoordinate - minElementY) / gridsize)
+            densityX = math.floor((XCoordinate - minElementX) / GRIDSIZE)
+            densityY = math.floor((YCoordinate - minElementY) / GRIDSIZE)
             gridDensity[densityY][densityX] = gridDensity[densityY][densityX] + 1
 
         synapseX = math.floor((XCoordinate - minElementX))

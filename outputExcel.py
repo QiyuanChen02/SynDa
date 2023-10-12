@@ -1,4 +1,5 @@
 import pandas as pd
+from constants import EXCEL_OUTPUT_PATH
 
 
 def outputExcel(
@@ -17,4 +18,4 @@ def outputExcel(
             "Is Synapse": isValidSynapse,
         },
     )
-    df.to_excel("output/pointData.xlsx", index=False)
+    df.to_excel(EXCEL_OUTPUT_PATH, index=False)

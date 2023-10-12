@@ -24,16 +24,16 @@ def coordinateRange(pointsData, type):
     return (maxElement, minElement)
 
 
-def getGridDimensions(gridsize, data):
+def getGridDimensions(GRIDSIZE, data):
     # Read the excel file to get the data and maximum and minimum values of the x and y coordinates
     maxElementX, minElementX = coordinateRange(data, "X")
     maxElementY, minElementY = coordinateRange(data, "Y")
 
-    # Alter Max + Min to multiples of gridsize (to have a whole number of squares)
-    maxX = floorArbitrary(maxElementX, gridsize) + gridsize
-    minX = floorArbitrary(minElementX, gridsize)
-    maxY = floorArbitrary(maxElementY, gridsize) + gridsize
-    minY = floorArbitrary(minElementY, gridsize)
+    # Alter Max + Min to multiples of GRIDSIZE (to have a whole number of squares)
+    maxX = floorArbitrary(maxElementX, GRIDSIZE) + GRIDSIZE
+    minX = floorArbitrary(minElementX, GRIDSIZE)
+    maxY = floorArbitrary(maxElementY, GRIDSIZE) + GRIDSIZE
+    minY = floorArbitrary(minElementY, GRIDSIZE)
 
     return (
         maxElementX,

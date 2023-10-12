@@ -7,36 +7,26 @@ from interactiveVisualisation import interactiveVisualisation
 from outputExcel import outputExcel
 from generateGrids import generateGrids
 from dimensions import getGridDimensions
-from thresholds import (
-    gridsize,
-    colourThreshold,
-    distanceThreshold,
-    prePostDistanceLowerThreshold,
-    prePostDistanceUpperThreshold,
-)
+from constants import GRIDSIZE, HOMER_SYNAPSE_PATH, SYT_SYNAPSE_PATH, INPUT_IMAGE_PATH
 
-preSynapseData = fetchPoints("input/Homer for Q 1.csv")
-postSynapseData = fetchPoints("input/Syt for Q 2.csv")
+preSynapseData = fetchPoints(HOMER_SYNAPSE_PATH)
+postSynapseData = fetchPoints(SYT_SYNAPSE_PATH)
 maxX, minX, maxY, minY, *_ = getGridDimensions(
-    gridsize, preSynapseData + postSynapseData
+    GRIDSIZE, preSynapseData + postSynapseData
 )
 filteredPreSynapseData = filterPoints(
     preSynapseData,
-    "input/synapses.png",
+    INPUT_IMAGE_PATH,
     maxX - minX,
     maxY - minY,
     "red",
-    colourThreshold,
-    distanceThreshold,
 )
 filteredPostSynapseData = filterPoints(
     postSynapseData,
-    "input/synapses.png",
+    INPUT_IMAGE_PATH,
     maxX - minX,
     maxY - minY,
     "green",
-    colourThreshold,
-    distanceThreshold,
 )
 
 # Finds closest neighbours for all the post synapses
@@ -57,8 +47,6 @@ isValidSynapse, validSynapses = validateSynapses(
     closestNeighbourDistance,
     filteredPreSynapseData,
     filteredPostSynapseData,
-    prePostDistanceLowerThreshold,
-    prePostDistanceUpperThreshold,
 )
 
 outputExcel(
@@ -70,10 +58,10 @@ outputExcel(
 )
 
 gridSynapses = generateGrids(
-    validSynapses, gridsize, minX, minY, maxX, maxY, isSynapse=True
+    validSynapses, GRIDSIZE, minX, minY, maxX, maxY, isSynapse=True
 )
 
-inputImage = Image.open("input/synapses.png")
+inputImage = Image.open(INPUT_IMAGE_PATH)
 resizedImage = inputImage.resize((round(maxX - minX), round(maxY - minY)))
 
 interactiveVisualisation(validSynapses, resizedImage)

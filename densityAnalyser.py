@@ -6,13 +6,7 @@ from interactiveVisualisation import interactiveVisualisation
 from outputImage import createOutputImage
 from generateGrids import generateGrids
 from dimensions import getGridDimensions
-from thresholds import (
-    gridsize,
-    colourThreshold,
-    distanceThreshold,
-    prePostDistanceLowerThreshold,
-    prePostDistanceUpperThreshold,
-)
+from constants import GRIDSIZE, HOMER_SYNAPSE_PATH, SYT_SYNAPSE_PATH, INPUT_IMAGE_PATH
 
 """This is the densityAnalyser code, which extracts the coordinates from 2 csv files
 to create a density map, as well as a scatter plot of the synapses, then generates an interactive image.
@@ -21,8 +15,8 @@ The basic idea behind the density map is to create a 2D array of zeros represent
 Finally the array is converted into an image, where the color of the square is determined by the value of the square in the array.
 """
 
-preSynapseData = fetchPoints("input/Homer for Q 1.csv")
-postSynapseData = fetchPoints("input/Syt for Q 2.csv")
+preSynapseData = fetchPoints(HOMER_SYNAPSE_PATH)
+postSynapseData = fetchPoints(SYT_SYNAPSE_PATH)
 (
     maxElementX,
     minElementX,
@@ -32,24 +26,20 @@ postSynapseData = fetchPoints("input/Syt for Q 2.csv")
     minX,
     maxY,
     minY,
-) = getGridDimensions(gridsize, preSynapseData + postSynapseData)
+) = getGridDimensions(GRIDSIZE, preSynapseData + postSynapseData)
 filteredPreSynapseData = filterPoints(
     preSynapseData,
-    "input/synapses.png",
+    INPUT_IMAGE_PATH,
     maxElementX - minElementX,
     maxElementY - minElementY,
     "red",
-    colourThreshold,
-    distanceThreshold,
 )
 filteredPostSynapseData = filterPoints(
     postSynapseData,
-    "input/synapses.png",
+    INPUT_IMAGE_PATH,
     maxElementX - minElementX,
     maxElementY - minElementY,
     "green",
-    colourThreshold,
-    distanceThreshold,
 )
 
 closestNeighbours, closestNeighbourDistance = findNeighbours(
@@ -69,17 +59,13 @@ isValidSynapse, validSynapses = validateSynapses(
     closestNeighbourDistance,
     filteredPreSynapseData,
     filteredPostSynapseData,
-    prePostDistanceLowerThreshold,
-    prePostDistanceUpperThreshold,
 )
 
 gridSynapses, gridDensity = generateGrids(
-    validSynapses, gridsize, minX, minY, maxX, maxY
+    validSynapses, GRIDSIZE, minX, minY, maxX, maxY
 )
 
 # Generate the images, overlays them and saves the image in the file densityImage.png the output directory
-imageDensity, imageSynapse, image = createOutputImage(
-    gridDensity, gridSynapses, gridsize
-)
+imageDensity, image = createOutputImage(gridDensity, gridSynapses, GRIDSIZE)
 
 interactiveVisualisation(validSynapses, imageDensity)

@@ -1,5 +1,9 @@
 import math
 from findNeighbours import isClosestNeighbour
+from constants import (
+    PRE_POST_DIST_LOWER_THRESHOLD,
+    PRE_POST_DIST_UPPER_THRESHOLD,
+)
 
 
 def getSynapse(pre, post, closestNeighbours, closestNeighbourDistance):
@@ -36,8 +40,6 @@ def validateSynapses(
     closestNeighbourDistance,
     preSynapseData,
     postSynapseData,
-    prePostDistanceLowerThreshold,
-    prePostDistanceUpperThreshold,
 ):
     distanceMinusRadius = []
     for i in range(len(closestNeighbourDistance)):
@@ -51,9 +53,9 @@ def validateSynapses(
     for i in range(len(synapses)):
         isValidSynapse.append(
             isClosestNeighbour(closestNeighbours, closestNeighbourDistance, i)
-            and prePostDistanceLowerThreshold
+            and PRE_POST_DIST_LOWER_THRESHOLD
             < distanceMinusRadius[i]
-            < prePostDistanceUpperThreshold
+            < PRE_POST_DIST_UPPER_THRESHOLD
         )
 
     validSynapses = []

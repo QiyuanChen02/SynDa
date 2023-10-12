@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
 import mplcursors
+from constants import (
+    POINTS_COLOUR,
+)
 
 
 # Show the interactive visualization
@@ -11,7 +14,8 @@ def interactiveVisualisation(data, imageDensity):
     for coordinate in data:
         x.append(float(coordinate[0]))
         y.append(float(coordinate[1]))
-        colours.append((1, 0.65, 0, 0.6))
+        r, g, b = POINTS_COLOUR
+        colours.append((r / 255, g / 255, b / 255, 0.8))
 
     # Create the scatter plot with the image of the density grid as the background
     fig, ax = plt.subplots()
