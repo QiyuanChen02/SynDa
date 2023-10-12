@@ -3,7 +3,7 @@ from findNeighbours import findNeighbours
 from obtainSynapse import getSynapse, validateSynapses
 from filterPoints import filterPoints
 from interactiveVisualisation import interactiveVisualisation
-from outputImage import createOutputImage
+from outputImage import createDensityImage
 from generateGrids import generateGrids
 from dimensions import getGridDimensions
 from constants import GRIDSIZE, HOMER_SYNAPSE_PATH, SYT_SYNAPSE_PATH, INPUT_IMAGE_PATH
@@ -66,6 +66,6 @@ gridSynapses, gridDensity = generateGrids(
 )
 
 # Generate the images, overlays them and saves the image in the file densityImage.png the output directory
-imageDensity, image = createOutputImage(gridDensity, gridSynapses, GRIDSIZE)
+imageDensity, image = createDensityImage(gridDensity, gridSynapses, GRIDSIZE)
 
 interactiveVisualisation(validSynapses, imageDensity)

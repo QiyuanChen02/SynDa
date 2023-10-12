@@ -4,6 +4,7 @@ from constants import (
     POINTS_COLOUR,
     DENSITY_COLOUR,
     DENSITY_IMAGE_OUTPUT_PATH,
+    SYNAPSE_IMAGE_OUTPUT_PATH,
 )
 
 
@@ -14,22 +15,25 @@ def getColourMap(gridDensity):
         POINTS_COLOUR,
     ]
 
-    # Define a color map for the density grid.
-    # Note that the maximum number of synapses in a square is used to determine the color of the squares, by dividing the number of synapses in a square by the maximum number of synapses and then converting it into an RGB tuple
-    maximumGridValue = max(map(max, gridDensity))
-    r, g, b = DENSITY_COLOUR
-    colorMapDensity = [
-        (
-            math.floor(r * (i / maximumGridValue)),
-            math.floor(g * (i / maximumGridValue)),
-            math.floor(b * (i / maximumGridValue)),
-        )
-        for i in range(maximumGridValue + 1)
-    ]
-    return colorMapSynapses, colorMapDensity
+    if gridDensity is None:
+        return colorMapSynapses, None
+    else:
+        # Define a color map for the density grid.
+        # Note that the maximum number of synapses in a square is used to determine the color of the squares, by dividing the number of synapses in a square by the maximum number of synapses and then converting it into an RGB tuple
+        maximumGridValue = max(map(max, gridDensity))
+        r, g, b = DENSITY_COLOUR
+        colorMapDensity = [
+            (
+                math.floor(r * (i / maximumGridValue)),
+                math.floor(g * (i / maximumGridValue)),
+                math.floor(b * (i / maximumGridValue)),
+            )
+            for i in range(maximumGridValue + 1)
+        ]
+        return colorMapSynapses, colorMapDensity
 
 
-def gridToImage(array, colorMap, scalingFactor, currentImage=None):
+def gridToImage(array, colorMap, scalingFactor=1, currentImage=None, brushSize=1):
     # Determine the dimensions of the array
     height = len(array)
     width = len(array[0])
@@ -55,30 +59,42 @@ def gridToImage(array, colorMap, scalingFactor, currentImage=None):
                 # Secondary loop to set the pixels of the block, with the scaling factor being the size of the block
                 for i in range(scalingFactor):
                     for j in range(scalingFactor):
-                        if blockX + i < image.width and blockY + j < image.height:
-                            image.putpixel((blockX + i, blockY + j), color)
+                        for k in range(brushSize):
+                            for l in range(brushSize):
+                                if (
+                                    blockX + i + k < image.width
+                                    and blockY + j + l < image.height
+                                ):
+                                    image.putpixel(
+                                        (blockX + i + k, blockY + j + l), color
+                                    )
 
     return image
 
 
-# This function overlays two images on top of each other, using the blend function of the PIL library.
-def overlayImages(image1, image2, alpha=0.5):
-    if image1.size != image2.size:
-        raise ValueError("Both images must have the same dimensions.")
-
-    # Create a new blank image with the same dimensions as the input images
-    overlayedImage = Image.new("RGBA", image1.size)
-
-    # Blend the two images together
-    overlayedImage = Image.blend(image1.convert("RGBA"), image2.convert("RGBA"), alpha)
-    return overlayedImage
-
-
-def createOutputImage(gridDensity, gridSynapses, scalingFactor):
+def createDensityImage(gridDensity, gridSynapses, scalingFactor):
     colorMapSynapses, colorMapDensity = getColourMap(gridDensity)
-    imageDensity = gridToImage(gridDensity, colorMapDensity, scalingFactor)
+    imageDensity = gridToImage(
+        gridDensity, colorMapDensity, scalingFactor=scalingFactor
+    )
     combinedImage = gridToImage(
-        gridSynapses, colorMapSynapses, 2, currentImage=imageDensity.copy()
+        gridSynapses,
+        colorMapSynapses,
+        scalingFactor=1,
+        currentImage=imageDensity.copy(),
     )
     combinedImage.save(DENSITY_IMAGE_OUTPUT_PATH)
     return imageDensity, combinedImage
+
+
+def createSynapseImage(gridSynapses, inputImage):
+    colorMapSynapses, _ = getColourMap(None)
+    imageSynapses = gridToImage(
+        gridSynapses,
+        colorMapSynapses,
+        scalingFactor=1,
+        currentImage=inputImage.copy(),
+        brushSize=2,
+    )
+    imageSynapses.save(SYNAPSE_IMAGE_OUTPUT_PATH)
+    return imageSynapses

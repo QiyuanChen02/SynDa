@@ -8,6 +8,7 @@ from outputExcel import outputExcel
 from generateGrids import generateGrids
 from dimensions import getGridDimensions
 from constants import GRIDSIZE, HOMER_SYNAPSE_PATH, SYT_SYNAPSE_PATH, INPUT_IMAGE_PATH
+from outputImage import createSynapseImage
 
 preSynapseData = fetchPoints(HOMER_SYNAPSE_PATH)
 postSynapseData = fetchPoints(SYT_SYNAPSE_PATH)
@@ -62,6 +63,8 @@ gridSynapses = generateGrids(
 )
 
 inputImage = Image.open(INPUT_IMAGE_PATH)
+
 resizedImage = inputImage.resize((round(maxX - minX), round(maxY - minY)))
+synapseImage = createSynapseImage(gridSynapses, resizedImage)
 
 interactiveVisualisation(validSynapses, resizedImage)
