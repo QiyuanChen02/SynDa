@@ -1,70 +1,90 @@
-from fetchPoints import fetchPoints
-from findNeighbours import findNeighbours
-from obtainSynapse import validateSynapses, getSynapse
 from PIL import Image
-from filterPoints import filterPoints
-from interactiveVisualisation import interactiveVisualisation
-from outputExcel import outputExcel
-from generateGrids import generateGrids
-from dimensions import getGridDimensions
-from constants import GRIDSIZE, HOMER_SYNAPSE_PATH, SYT_SYNAPSE_PATH, INPUT_IMAGE_PATH
-from outputImage import createSynapseImage
 
-preSynapseData = fetchPoints(HOMER_SYNAPSE_PATH)
-postSynapseData = fetchPoints(SYT_SYNAPSE_PATH)
-maxX, minX, maxY, minY, *_ = getGridDimensions(
-    GRIDSIZE, preSynapseData + postSynapseData
-)
-filteredPreSynapseData = filterPoints(
-    preSynapseData,
-    INPUT_IMAGE_PATH,
-    maxX - minX,
-    maxY - minY,
-    "red",
-)
-filteredPostSynapseData = filterPoints(
-    postSynapseData,
-    INPUT_IMAGE_PATH,
-    maxX - minX,
-    maxY - minY,
-    "green",
-)
+from helpers.fetchPoints import fetchPoints
+from helpers.findNeighbours import findNeighbours
+from helpers.obtainSynapse import validateSynapses, getSynapse
+from helpers.filterPoints import filterPoints
+from helpers.interactiveVisualisation import interactiveVisualisation
+from helpers.outputExcel import outputExcel
+from helpers.generateGrids import generateGrids
+from helpers.dimensions import getGridDimensions
+from helpers.constants import GRIDSIZE
+from helpers.outputImage import createSynapseImage
+from helpers.fetchPaths import fetchPaths
 
-# Finds closest neighbours for all the post synapses
-closestNeighbours, closestNeighbourDistance = findNeighbours(
-    filteredPreSynapseData, filteredPostSynapseData
-)
+def analyseImageSynapse(folderName, visualise=True):
+    (
+        preSynapsePath,
+        postSynapsePath,
+        inputImagePath,
+        densityImagePath,
+        synapseImagePath,
+        synapseDataPath,
+    ) = fetchPaths(folderName)
+    preSynapseData = fetchPoints(preSynapsePath)
+    postSynapseData = fetchPoints(postSynapsePath)
+    maxX, minX, maxY, minY, *_ = getGridDimensions(
+        GRIDSIZE, preSynapseData + postSynapseData
+    )
+    filteredPreSynapseData = filterPoints(
+        preSynapseData,
+        inputImagePath,
+        maxX - minX,
+        maxY - minY,
+        "red",
+    )
+    filteredPostSynapseData = filterPoints(
+        postSynapseData,
+        inputImagePath,
+        maxX - minX,
+        maxY - minY,
+        "green",
+    )
 
-synapses = getSynapse(
-    filteredPreSynapseData,
-    filteredPostSynapseData,
-    closestNeighbours,
-    closestNeighbourDistance,
-)
+    # Finds closest neighbours for all the post synapses
+    closestNeighbours, closestNeighbourDistance = findNeighbours(
+        filteredPreSynapseData, filteredPostSynapseData
+    )
 
-isValidSynapse, validSynapses = validateSynapses(
-    synapses,
-    closestNeighbours,
-    closestNeighbourDistance,
-    filteredPreSynapseData,
-    filteredPostSynapseData,
-)
+    synapses = getSynapse(
+        filteredPreSynapseData,
+        filteredPostSynapseData,
+        closestNeighbours,
+        closestNeighbourDistance,
+    )
 
-outputExcel(
-    filteredPostSynapseData,
-    closestNeighbours,
-    closestNeighbourDistance,
-    synapses,
-    isValidSynapse,
-)
+    isValidSynapse, validSynapses = validateSynapses(
+        synapses,
+        closestNeighbours,
+        closestNeighbourDistance,
+        filteredPreSynapseData,
+        filteredPostSynapseData,
+    )
 
-gridSynapses = generateGrids(
-    validSynapses, GRIDSIZE, minX, minY, maxX, maxY, isSynapse=True
-)
+    outputExcel(
+        filteredPostSynapseData,
+        closestNeighbours,
+        closestNeighbourDistance,
+        synapses,
+        isValidSynapse,
+        synapseDataPath,
+    )
 
-inputImage = Image.open(INPUT_IMAGE_PATH)
+    totalPoints = len(validSynapses)
+    print(f"Total number of synapses: {totalPoints}")
 
-resizedImage = inputImage.resize((round(maxX - minX), round(maxY - minY)))
-synapseImage = createSynapseImage(gridSynapses, resizedImage)
+    gridSynapses = generateGrids(
+        validSynapses, GRIDSIZE, minX, minY, maxX, maxY, isSynapse=True
+    )
 
-interactiveVisualisation(validSynapses, resizedImage)
+    inputImage = Image.open(inputImagePath)
+
+    resizedImage = inputImage.resize((round(maxX - minX), round(maxY - minY)))
+    synapseImage = createSynapseImage(gridSynapses, resizedImage, synapseImagePath)
+
+    if visualise:
+        interactiveVisualisation(validSynapses, resizedImage)
+
+if __name__ == "__main__":
+    fileName = input("Enter the name of the folder you wish to analyse: ")
+    analyseImageSynapse(fileName)

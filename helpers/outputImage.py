@@ -1,10 +1,9 @@
 from PIL import Image
 import math
-from constants import (
+import os
+from helpers.constants import (
     POINTS_COLOUR,
     DENSITY_COLOUR,
-    DENSITY_IMAGE_OUTPUT_PATH,
-    SYNAPSE_IMAGE_OUTPUT_PATH,
 )
 
 
@@ -72,22 +71,28 @@ def gridToImage(array, colorMap, scalingFactor=1, currentImage=None, brushSize=1
     return image
 
 
-def createDensityImage(gridDensity, gridSynapses, scalingFactor):
+def createDensityImage(gridDensity, gridSynapses, scalingFactor, outputPath):
     colorMapSynapses, colorMapDensity = getColourMap(gridDensity)
     imageDensity = gridToImage(
-        gridDensity, colorMapDensity, scalingFactor=scalingFactor
+        gridDensity,
+        colorMapDensity,
+        scalingFactor=scalingFactor,
     )
     combinedImage = gridToImage(
         gridSynapses,
         colorMapSynapses,
         scalingFactor=1,
         currentImage=imageDensity.copy(),
+        brushSize=2,
     )
-    combinedImage.save(DENSITY_IMAGE_OUTPUT_PATH)
+    folderPath = os.path.dirname(outputPath)
+    if not os.path.exists(folderPath):
+        os.makedirs(folderPath)
+    combinedImage.save(outputPath)
     return imageDensity, combinedImage
 
 
-def createSynapseImage(gridSynapses, inputImage):
+def createSynapseImage(gridSynapses, inputImage, outputPath):
     colorMapSynapses, _ = getColourMap(None)
     imageSynapses = gridToImage(
         gridSynapses,
@@ -96,5 +101,8 @@ def createSynapseImage(gridSynapses, inputImage):
         currentImage=inputImage.copy(),
         brushSize=2,
     )
-    imageSynapses.save(SYNAPSE_IMAGE_OUTPUT_PATH)
+    folderPath = os.path.dirname(outputPath)
+    if not os.path.exists(folderPath):
+        os.makedirs(folderPath)
+    imageSynapses.save(outputPath)
     return imageSynapses

@@ -1,6 +1,6 @@
 import numpy as np
 from PIL import Image
-from constants import (
+from helpers.constants import (
     COLOUR_THRESHOLD,
     DISTANCE_THRESHOLD,
 )

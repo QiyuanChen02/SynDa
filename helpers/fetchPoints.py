@@ -4,9 +4,12 @@ def fetchPoints(fileName):
     wantedIndices = []
     points = []
     wantedPoints = []
-    with open(fileName) as f:
-        for line in f:
-            points.append(line.split(","))
+    try:
+        with open(fileName) as f:
+            for line in f:
+                points.append(line.split(","))
+    except FileNotFoundError:
+        raise Exception(f"The file {fileName} was not found. The file is either missing or labelled incorrectly.")
 
     for data in wantedData:
         if data not in points[0]:

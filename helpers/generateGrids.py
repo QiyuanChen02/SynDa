@@ -24,14 +24,6 @@ def generateGrids(
     gridDensity = generateEmptyGrid(int(height / GRIDSIZE), int(width / GRIDSIZE))
     gridSynapses = generateEmptyGrid(int(height), int(width))
 
-    # Average density + synaptic number calculation
-    squaresX = width // GRIDSIZE
-    squaresY = height // GRIDSIZE
-    totalPoints = len(data)
-    meanValue = totalPoints / (squaresX * squaresY)
-    print("Mean density of the Array: " + str(meanValue))
-    print("Total Synaptic Number of the Array: " + str(totalPoints))
-
     # Modifies the density and the points grid based on the coordinates in the data
     # The code takes the generated grid and adds 1 to the value of the density grid where the synapse is located.
     # For example, if the synapse is located in the top left square of the grid (which we can work out using the coordinates of the points), the value of that square will be increased by 1.

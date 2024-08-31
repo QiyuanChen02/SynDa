@@ -1,5 +1,5 @@
 import pandas as pd
-from constants import EXCEL_OUTPUT_PATH
+import os
 
 
 def outputExcel(
@@ -8,6 +8,7 @@ def outputExcel(
     closestNeighbourDistance,
     synapses,
     isValidSynapse,
+    outputPath,
 ):
     df = pd.DataFrame(
         {
@@ -18,4 +19,8 @@ def outputExcel(
             "Is Synapse": isValidSynapse,
         },
     )
-    df.to_excel(EXCEL_OUTPUT_PATH, index=False)
+
+    folderPath = os.path.dirname(outputPath)
+    if not os.path.exists(folderPath):
+        os.makedirs(folderPath)
+    df.to_excel(outputPath, index=False)

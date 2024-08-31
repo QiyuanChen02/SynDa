@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import mplcursors
-from constants import (
+from helpers.constants import (
     POINTS_COLOUR,
 )
 
